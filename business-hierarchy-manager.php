@@ -489,7 +489,8 @@ function business_hierarchy_manager_admin_menu() {
         'Add New Bureau',
         'Add New Bureau',
         'edit_bureau_companies',
-        'post-new.php?post_type=bureau_company'
+        'business-hierarchy-add-bureau',
+        'business_hierarchy_manager_add_bureau_page'
     );
     
     // Client Companies submenu
@@ -554,6 +555,11 @@ add_action('admin_menu', 'business_hierarchy_manager_admin_menu');
  * Basic admin page
  */
 function business_hierarchy_manager_admin_page() {
+    // Show success message if bureau was created
+    if (isset($_GET['bureau_created']) && $_GET['bureau_created'] == '1') {
+        echo '<div class="notice notice-success is-dismissible"><p>Bureau company created successfully!</p></div>';
+    }
+    
     echo '<div class="wrap">';
     echo '<h1>Business Hierarchy Manager</h1>';
     echo '<p>Plugin is activated successfully!</p>';
@@ -587,6 +593,31 @@ function business_hierarchy_manager_test_page() {
     
     // Load the test template
     include plugin_dir_path(__FILE__) . 'templates/admin/test-page.php';
+}
+
+/**
+ * Add New Bureau page
+ */
+function business_hierarchy_manager_add_bureau_page() {
+    // Enqueue admin styles
+    wp_enqueue_style(
+        'business-hierarchy-manager-admin',
+        plugin_dir_url(__FILE__) . 'templates/admin/assets/admin.css',
+        array(),
+        BUSINESS_HIERARCHY_MANAGER_VERSION
+    );
+    
+    // Enqueue form JavaScript
+    wp_enqueue_script(
+        'bureau-form-js',
+        plugin_dir_url(__FILE__) . 'templates/admin/assets/bureau-form.js',
+        array('jquery'),
+        BUSINESS_HIERARCHY_MANAGER_VERSION,
+        true
+    );
+    
+    // Load the bureau form template
+    include plugin_dir_path(__FILE__) . 'templates/admin/bureau-form.php';
 }
 
 /**
@@ -1164,88 +1195,5 @@ function business_hierarchy_manager_customize_publish_section() {
     }
 }
 add_action('admin_footer', 'business_hierarchy_manager_customize_publish_section');
-
-/**
- * Replace the entire post editor with a custom form for bureau companies
- */
-function business_hierarchy_manager_replace_post_editor() {
-    $screen = get_current_screen();
-    if ($screen && $screen->post_type === 'bureau_company' && $screen->action === 'add') {
-        // Enqueue admin styles
-        wp_enqueue_style(
-            'business-hierarchy-manager-admin',
-            plugin_dir_url(__FILE__) . 'templates/admin/assets/admin.css',
-            array(),
-            BUSINESS_HIERARCHY_MANAGER_VERSION
-        );
-        
-        // Enqueue form JavaScript
-        wp_enqueue_script(
-            'bureau-form-js',
-            plugin_dir_url(__FILE__) . 'templates/admin/assets/bureau-form.js',
-            array('jquery'),
-            BUSINESS_HIERARCHY_MANAGER_VERSION,
-            true
-        );
-        
-        // Completely replace the post editor with our custom form
-        add_action('admin_footer', function() {
-            ?>
-            <script type="text/javascript">
-            jQuery(document).ready(function($) {
-                // Hide all WordPress post editor elements
-                $('#poststuff').hide();
-                $('#post-body').hide();
-                $('#post-body-content').hide();
-                $('#post').hide();
-                $('.wp-editor-wrap').hide();
-                $('#titlediv').hide();
-                $('#postdivrich').hide();
-                $('#postdiv').hide();
-                $('#submitdiv').hide();
-                $('#side-sortables').hide();
-                
-                // Create our custom form container
-                var customForm = $('<div class="bureau-form-container"></div>');
-                
-                // Load our custom form content
-                $.ajax({
-                    url: '<?php echo admin_url('admin-ajax.php'); ?>',
-                    type: 'POST',
-                    data: {
-                        action: 'load_bureau_form',
-                        nonce: '<?php echo wp_create_nonce('load_bureau_form'); ?>'
-                    },
-                    success: function(response) {
-                        customForm.html(response);
-                        $('#wpbody-content').append(customForm);
-                    },
-                    error: function() {
-                        // Fallback: show a simple message
-                        customForm.html('<div class="wrap"><h1>Add New Bureau Company</h1><p>Custom form loading...</p></div>');
-                        $('#wpbody-content').append(customForm);
-                    }
-                });
-            });
-            </script>
-            <?php
-        });
-    }
-}
-add_action('admin_init', 'business_hierarchy_manager_replace_post_editor');
-
-/**
- * AJAX handler to load the bureau form
- */
-function business_hierarchy_manager_load_bureau_form() {
-    check_ajax_referer('load_bureau_form', 'nonce');
-    
-    ob_start();
-    include plugin_dir_path(__FILE__) . 'templates/admin/bureau-form.php';
-    $content = ob_get_clean();
-    
-    wp_send_json_success($content);
-}
-add_action('wp_ajax_load_bureau_form', 'business_hierarchy_manager_load_bureau_form');
 
 // That's all, folks! The rest happens in the class files.
