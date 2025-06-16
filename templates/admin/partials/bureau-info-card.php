@@ -11,101 +11,51 @@ if (!defined('ABSPATH')) {
 }
 ?>
 
-<div class="rounded-lg border bg-card text-card-foreground shadow-sm">
-    <div class="flex flex-col space-y-1.5 p-6">
-        <h3 class="text-2xl font-semibold leading-none tracking-tight">Bureau Information</h3>
-        <p class="text-sm text-muted-foreground">Enter the bureau company details.</p>
-    </div>
-    <div class="p-6 pt-0 space-y-4">
-        <!-- Bureau Name -->
-        <div class="grid w-full max-w-sm items-center gap-1.5">
-            <label class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70" for="post_title">
-                Bureau Company Name *
+<div class="card bg-base-100 shadow-lg rounded-xl w-full mb-8">
+    <div class="card-body p-8">
+        <h3 class="card-title text-2xl mb-2 text-left">Bureau Information</h3>
+        <p class="text-sm text-base-content/70 mb-6 text-left">Enter the bureau company details.</p>
+        <div class="form-control mb-6 w-full">
+            <label class="label text-left" for="post_title">
+                <span class="label-text">Bureau Company Name *</span>
             </label>
-            <input 
-                class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50" 
-                id="post_title" 
-                name="post_title" 
-                required 
-                placeholder="Enter bureau company name"
-            />
+            <input class="input input-bordered w-full" id="post_title" name="post_title" required placeholder="Enter bureau company name" />
         </div>
-        
-        <!-- Street Address 1 -->
-        <div class="grid w-full max-w-sm items-center gap-1.5">
-            <label class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70" for="bureau_street1">
-                Street Address 1
+        <div class="form-control mb-6 w-full">
+            <label class="label text-left" for="bureau_street1">
+                <span class="label-text">Street Address 1</span>
             </label>
-            <input 
-                class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50" 
-                id="bureau_street1" 
-                name="bureau_street1" 
-                placeholder="123 Main Street"
-            />
+            <input class="input input-bordered w-full" id="bureau_street1" name="bureau_street1" placeholder="123 Main Street" />
         </div>
-        
-        <!-- Street Address 2 -->
-        <div class="grid w-full max-w-sm items-center gap-1.5">
-            <label class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70" for="bureau_street2">
-                Street Address 2
+        <div class="form-control mb-6 w-full">
+            <label class="label text-left" for="bureau_street2">
+                <span class="label-text">Street Address 2</span>
             </label>
-            <input 
-                class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50" 
-                id="bureau_street2" 
-                name="bureau_street2" 
-                placeholder="Suite 100, Floor 2, etc."
-            />
+            <input class="input input-bordered w-full" id="bureau_street2" name="bureau_street2" placeholder="Suite 100, Floor 2, etc." />
         </div>
-        
-        <!-- City, State, ZIP Row -->
-        <div class="grid grid-cols-3 gap-4">
-            <div class="grid w-full items-center gap-1.5">
-                <label class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70" for="bureau_city">
-                    City
-                </label>
-                <input 
-                    class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50" 
-                    id="bureau_city" 
-                    name="bureau_city" 
-                    placeholder="City"
-                />
-            </div>
-            <div class="grid w-full items-center gap-1.5">
-                <label class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70" for="bureau_state">
-                    State
-                </label>
-                <input 
-                    class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50" 
-                    id="bureau_state" 
-                    name="bureau_state" 
-                    placeholder="State"
-                />
-            </div>
-            <div class="grid w-full items-center gap-1.5">
-                <label class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70" for="bureau_zip">
-                    ZIP Code
-                </label>
-                <input 
-                    class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50" 
-                    id="bureau_zip" 
-                    name="bureau_zip" 
-                    placeholder="12345"
-                />
-            </div>
-        </div>
-        
-        <!-- Phone Number -->
-        <div class="grid w-full max-w-sm items-center gap-1.5">
-            <label class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70" for="bureau_phone">
-                Phone Number
+        <div class="form-control mb-6 w-full">
+            <label class="label text-left" for="bureau_city">
+                <span class="label-text">City</span>
             </label>
-            <input 
-                class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50" 
-                type="tel" 
-                id="bureau_phone" 
-                name="bureau_phone" 
-                placeholder="(555) 123-4567"
-            />
+            <input class="input input-bordered w-full" id="bureau_city" name="bureau_city" placeholder="City" />
+        </div>
+        <div class="form-control mb-6 w-full">
+            <label class="label text-left" for="bureau_state">
+                <span class="label-text">State</span>
+            </label>
+            <input class="input input-bordered w-full" id="bureau_state" name="bureau_state" placeholder="State" />
+        </div>
+        <div class="form-control mb-6 w-full">
+            <label class="label text-left" for="bureau_zip">
+                <span class="label-text">ZIP Code</span>
+            </label>
+            <input class="input input-bordered w-full" id="bureau_zip" name="bureau_zip" placeholder="12345" />
+        </div>
+        <div class="form-control w-full">
+            <label class="label text-left" for="bureau_phone">
+                <span class="label-text">Phone Number</span>
+            </label>
+            <input class="input input-bordered w-full" type="tel" id="bureau_phone" name="bureau_phone" placeholder="(555) 123-4567" />
         </div>
     </div>
 </div> 

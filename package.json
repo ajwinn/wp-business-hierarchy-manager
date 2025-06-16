@@ -1,0 +1,12 @@
+{
+  "name": "business-hierarchy-manager",
+  "version": "1.0.0",
+  "description": "WordPress plugin admin styling with Tailwind CSS and DaisyUI",
+  "scripts": {
+    "build:css": "tailwindcss -i ./assets/css/admin-tailwind.css -o ./assets/css/admin.css --minify"
+  },
+  "devDependencies": {
+    "tailwindcss": "^3.4.1",
+    "daisyui": "^4.0.7"
+  }
+} 

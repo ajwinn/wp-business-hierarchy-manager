@@ -588,14 +588,6 @@ function business_hierarchy_manager_settings_page() {
  * Test page to verify partial template structure
  */
 function business_hierarchy_manager_test_page() {
-    // Enqueue admin styles
-    wp_enqueue_style(
-        'business-hierarchy-manager-admin',
-        plugin_dir_url(__FILE__) . 'templates/admin/assets/admin.css',
-        array(),
-        BUSINESS_HIERARCHY_MANAGER_VERSION
-    );
-    
     // Load the test template
     business_hierarchy_manager_load_admin_template('test-page.php');
 }
@@ -604,14 +596,6 @@ function business_hierarchy_manager_test_page() {
  * Add New Bureau page
  */
 function business_hierarchy_manager_add_bureau_page() {
-    // Enqueue admin styles
-    wp_enqueue_style(
-        'business-hierarchy-manager-admin',
-        plugin_dir_url(__FILE__) . 'templates/admin/assets/admin.css',
-        array(),
-        BUSINESS_HIERARCHY_MANAGER_VERSION
-    );
-    
     // Enqueue form JavaScript
     wp_enqueue_script(
         'bureau-form-js',
@@ -620,7 +604,6 @@ function business_hierarchy_manager_add_bureau_page() {
         BUSINESS_HIERARCHY_MANAGER_VERSION,
         true
     );
-    
     // Load the bureau form template
     business_hierarchy_manager_load_admin_template('bureau-form.php');
 }
@@ -1124,3 +1107,11 @@ function business_hierarchy_manager_customize_publish_section() {
 add_action('admin_footer', 'business_hierarchy_manager_customize_publish_section');
 
 // That's all, folks! The rest happens in the class files.
+
+add_action('admin_enqueue_scripts', function() {
+    wp_enqueue_style('bhm-admin-tailwind', plugin_dir_url(__FILE__) . 'assets/css/admin.css', [], '1.0');
+});
+
+add_action('admin_head', function() {
+    echo '<script>document.documentElement.setAttribute("data-theme", "light");</script>';
+});
