@@ -1162,27 +1162,64 @@ function business_hierarchy_manager_replace_post_editor() {
             true
         );
         
-        // Completely replace the post editor content
-        add_action('edit_form_after_title', function() {
-            // Hide the entire post editor
-            echo '<style>
-                #poststuff { display: none !important; }
-                #post-body { display: none !important; }
-                #post-body-content { display: none !important; }
-                #post { display: none !important; }
-                .wp-editor-wrap { display: none !important; }
-                #titlediv { display: none !important; }
-                #postdivrich { display: none !important; }
-                #postdiv { display: none !important; }
-            </style>';
-            
-            // Output our custom form
-            echo '<div class="bureau-form-container">';
-            include plugin_dir_path(__FILE__) . 'templates/admin/bureau-form.php';
-            echo '</div>';
+        // Completely replace the post editor with our custom form
+        add_action('admin_footer', function() {
+            ?>
+            <script type="text/javascript">
+            jQuery(document).ready(function($) {
+                // Hide all WordPress post editor elements
+                $('#poststuff').hide();
+                $('#post-body').hide();
+                $('#post-body-content').hide();
+                $('#post').hide();
+                $('.wp-editor-wrap').hide();
+                $('#titlediv').hide();
+                $('#postdivrich').hide();
+                $('#postdiv').hide();
+                $('#submitdiv').hide();
+                $('#side-sortables').hide();
+                
+                // Create our custom form container
+                var customForm = $('<div class="bureau-form-container"></div>');
+                
+                // Load our custom form content
+                $.ajax({
+                    url: '<?php echo admin_url('admin-ajax.php'); ?>',
+                    type: 'POST',
+                    data: {
+                        action: 'load_bureau_form',
+                        nonce: '<?php echo wp_create_nonce('load_bureau_form'); ?>'
+                    },
+                    success: function(response) {
+                        customForm.html(response);
+                        $('#wpbody-content').append(customForm);
+                    },
+                    error: function() {
+                        // Fallback: show a simple message
+                        customForm.html('<div class="wrap"><h1>Add New Bureau Company</h1><p>Custom form loading...</p></div>');
+                        $('#wpbody-content').append(customForm);
+                    }
+                });
+            });
+            </script>
+            <?php
         });
     }
 }
 add_action('admin_init', 'business_hierarchy_manager_replace_post_editor');
+
+/**
+ * AJAX handler to load the bureau form
+ */
+function business_hierarchy_manager_load_bureau_form() {
+    check_ajax_referer('load_bureau_form', 'nonce');
+    
+    ob_start();
+    include plugin_dir_path(__FILE__) . 'templates/admin/bureau-form.php';
+    $content = ob_get_clean();
+    
+    wp_send_json_success($content);
+}
+add_action('wp_ajax_load_bureau_form', 'business_hierarchy_manager_load_bureau_form');
 
 // That's all, folks! The rest happens in the class files.
