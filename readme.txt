@@ -16,8 +16,8 @@ Business Hierarchy Manager creates a WordPress-native hierarchy system for manag
 
 = Key Features =
 
-* **WordPress-Native Architecture**: Leverages WordPress's built-in systems (Custom Post Types, User Meta, Capabilities, Hooks & Filters)
-* **Multi-Tenant Hierarchy**: Manage bureau companies, client companies, and their team members
+* **WordPress-Native Architecture**: Leverages WordPress's built-in systems
+* **Multi-Tenant Hierarchy**: Manage bureau companies, client companies, and team members
 * **Granular Permissions**: Role-based access control with primary member privileges
 * **Admin Integration**: Seamless integration with WordPress admin interface
 * **Custom Post Types**: Bureau Companies, Client Companies, and Invitations
@@ -37,15 +37,6 @@ Business Hierarchy Manager creates a WordPress-native hierarchy system for manag
 * User-company relationship management
 * Frontend dashboards for bureau and client users
 * Invitation system and onboarding workflow
-* Advanced permission enforcement
-
-= Use Cases =
-
-* Payroll bureaus managing multiple client companies
-* Client companies managing their team members
-* Invitation-based onboarding for new employees
-* Role-based access control for business hierarchies
-* Multi-tenant business relationship management
 
 == Installation ==
 
@@ -80,10 +71,6 @@ A Client Company is a business that uses the services of a Bureau Company for pa
 = Can users belong to multiple companies? =
 
 The current implementation supports users belonging to one company at a time, with plans for multi-company support in future versions.
-
-= Is this plugin compatible with multisite? =
-
-The plugin is designed for single-site installations. Multisite compatibility is planned for future versions.
 
 == Screenshots ==
 
@@ -135,50 +122,6 @@ Initial release. This is the first stable version with core infrastructure compl
 * Data import/export
 * Reporting and analytics
 
-== Technical Details ==
-
-= Architecture =
-
-The plugin uses WordPress-native architecture:
-* Custom Post Types for content management
-* User Meta for relationship storage
-* Capabilities for permission control
-* Hooks & Filters for extensibility
-
-= Database Schema =
-
-```sql
--- User-Company Relationships
-wp_business_hierarchy_user_companies (
-    id, user_id, company_id, company_type, 
-    role, is_primary, created_at
-)
-```
-
-= File Structure =
-
-```
-business-hierarchy-manager/
-├── business-hierarchy-manager.php    # Main plugin file
-├── includes/                         # Core plugin classes
-├── admin/                           # Admin-specific functionality
-├── public/                          # Frontend functionality
-├── core/                            # Business logic classes
-├── database/                        # Database management
-├── assets/                          # CSS, JS, images
-├── templates/                       # Template files
-├── languages/                       # Translation files
-└── uninstall.php                   # Cleanup on uninstall
-```
-
 == Support ==
 
-For support and documentation, please refer to the plugin's documentation or create an issue in the project repository.
-
-== Contributing ==
-
-This plugin is designed with extensibility in mind. Key extension points:
-* Custom hooks for business logic
-* Filterable capability checks
-* Extensible user role system
-* Pluggable invitation workflows
+For support and documentation, please refer to the plugin's documentation or create an issue in the project repository. 
