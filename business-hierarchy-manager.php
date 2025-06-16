@@ -537,6 +537,16 @@ function business_hierarchy_manager_admin_menu() {
         'business-hierarchy-settings',
         'business_hierarchy_manager_settings_page'
     );
+    
+    // Test submenu
+    add_submenu_page(
+        'business-hierarchy-manager',
+        'Test Page',
+        'Test',
+        'manage_options',
+        'business-hierarchy-test',
+        'business_hierarchy_manager_test_page'
+    );
 }
 add_action('admin_menu', 'business_hierarchy_manager_admin_menu');
 
@@ -561,6 +571,22 @@ function business_hierarchy_manager_settings_page() {
     echo '<h1>Business Hierarchy Manager Settings</h1>';
     echo '<p>Settings page coming soon...</p>';
     echo '</div>';
+}
+
+/**
+ * Test page to verify partial template structure
+ */
+function business_hierarchy_manager_test_page() {
+    // Enqueue admin styles
+    wp_enqueue_style(
+        'business-hierarchy-manager-admin',
+        plugin_dir_url(__FILE__) . 'templates/admin/assets/admin.css',
+        array(),
+        BUSINESS_HIERARCHY_MANAGER_VERSION
+    );
+    
+    // Load the test template
+    include plugin_dir_path(__FILE__) . 'templates/admin/test-page.php';
 }
 
 /**
