@@ -934,8 +934,24 @@ function business_hierarchy_manager_save_bureau_fields($post_id, $post) {
     }
     
     // Save bureau details
-    if (isset($_POST['bureau_location'])) {
-        update_post_meta($post_id, '_bureau_location', sanitize_text_field($_POST['bureau_location']));
+    if (isset($_POST['bureau_street1'])) {
+        update_post_meta($post_id, '_bureau_street1', sanitize_text_field($_POST['bureau_street1']));
+    }
+    
+    if (isset($_POST['bureau_street2'])) {
+        update_post_meta($post_id, '_bureau_street2', sanitize_text_field($_POST['bureau_street2']));
+    }
+    
+    if (isset($_POST['bureau_city'])) {
+        update_post_meta($post_id, '_bureau_city', sanitize_text_field($_POST['bureau_city']));
+    }
+    
+    if (isset($_POST['bureau_state'])) {
+        update_post_meta($post_id, '_bureau_state', sanitize_text_field($_POST['bureau_state']));
+    }
+    
+    if (isset($_POST['bureau_zip'])) {
+        update_post_meta($post_id, '_bureau_zip', sanitize_text_field($_POST['bureau_zip']));
     }
     
     if (isset($_POST['bureau_phone'])) {
@@ -981,7 +997,11 @@ function business_hierarchy_manager_save_bureau_fields($post_id, $post) {
 function business_hierarchy_manager_bureau_details_callback($post) {
     wp_nonce_field('business_hierarchy_manager_save_bureau', 'business_hierarchy_manager_bureau_nonce');
     
-    $location = get_post_meta($post->ID, '_bureau_location', true);
+    $street1 = get_post_meta($post->ID, '_bureau_street1', true);
+    $street2 = get_post_meta($post->ID, '_bureau_street2', true);
+    $city = get_post_meta($post->ID, '_bureau_city', true);
+    $state = get_post_meta($post->ID, '_bureau_state', true);
+    $zip = get_post_meta($post->ID, '_bureau_zip', true);
     $phone = get_post_meta($post->ID, '_bureau_phone', true);
     
     ?>
@@ -989,11 +1009,44 @@ function business_hierarchy_manager_bureau_details_callback($post) {
         <table class="form-table">
             <tr>
                 <th scope="row">
-                    <label for="bureau_location">Location</label>
+                    <label for="bureau_street1">Street Address 1</label>
                 </th>
                 <td>
-                    <input type="text" id="bureau_location" name="bureau_location" value="<?php echo esc_attr($location); ?>" class="regular-text" />
-                    <p class="description">Enter the bureau's location (city, state, etc.)</p>
+                    <input type="text" id="bureau_street1" name="bureau_street1" value="<?php echo esc_attr($street1); ?>" class="regular-text" />
+                    <p class="description">Enter the primary street address</p>
+                </td>
+            </tr>
+            <tr>
+                <th scope="row">
+                    <label for="bureau_street2">Street Address 2</label>
+                </th>
+                <td>
+                    <input type="text" id="bureau_street2" name="bureau_street2" value="<?php echo esc_attr($street2); ?>" class="regular-text" />
+                    <p class="description">Suite, floor, or additional address information</p>
+                </td>
+            </tr>
+            <tr>
+                <th scope="row">
+                    <label for="bureau_city">City</label>
+                </th>
+                <td>
+                    <input type="text" id="bureau_city" name="bureau_city" value="<?php echo esc_attr($city); ?>" class="regular-text" />
+                </td>
+            </tr>
+            <tr>
+                <th scope="row">
+                    <label for="bureau_state">State</label>
+                </th>
+                <td>
+                    <input type="text" id="bureau_state" name="bureau_state" value="<?php echo esc_attr($state); ?>" class="regular-text" />
+                </td>
+            </tr>
+            <tr>
+                <th scope="row">
+                    <label for="bureau_zip">ZIP Code</label>
+                </th>
+                <td>
+                    <input type="text" id="bureau_zip" name="bureau_zip" value="<?php echo esc_attr($zip); ?>" class="regular-text" />
                 </td>
             </tr>
             <tr>
@@ -1117,8 +1170,28 @@ function business_hierarchy_manager_replace_post_editor() {
                                 </div>
                                 
                                 <div class="form-row">
-                                    <label for="bureau_location">Location</label>
-                                    <input type="text" id="bureau_location" name="bureau_location" class="form-control" placeholder="City, State, Country">
+                                    <label for="bureau_street1">Street Address 1</label>
+                                    <input type="text" id="bureau_street1" name="bureau_street1" class="form-control" placeholder="123 Main Street">
+                                </div>
+                                
+                                <div class="form-row">
+                                    <label for="bureau_street2">Street Address 2</label>
+                                    <input type="text" id="bureau_street2" name="bureau_street2" class="form-control" placeholder="Suite 100, Floor 2, etc.">
+                                </div>
+                                
+                                <div class="form-row address-row">
+                                    <div class="address-field">
+                                        <label for="bureau_city">City</label>
+                                        <input type="text" id="bureau_city" name="bureau_city" class="form-control" placeholder="City">
+                                    </div>
+                                    <div class="address-field">
+                                        <label for="bureau_state">State</label>
+                                        <input type="text" id="bureau_state" name="bureau_state" class="form-control" placeholder="State">
+                                    </div>
+                                    <div class="address-field">
+                                        <label for="bureau_zip">ZIP Code</label>
+                                        <input type="text" id="bureau_zip" name="bureau_zip" class="form-control" placeholder="12345">
+                                    </div>
                                 </div>
                                 
                                 <div class="form-row">
@@ -1220,6 +1293,20 @@ function business_hierarchy_manager_replace_post_editor() {
             border-color: #0073aa;
             box-shadow: 0 0 0 1px #0073aa;
             outline: none;
+        }
+        
+        .address-row {
+            display: flex;
+            gap: 15px;
+            align-items: flex-end;
+        }
+        
+        .address-field {
+            flex: 1;
+        }
+        
+        .address-field .form-control {
+            max-width: none;
         }
         
         .form-row small {
