@@ -72,7 +72,7 @@ function business_hierarchy_manager_check_requirements() {
     $messages = array();
 
     // Check WordPress version
-    if (version_compare(get_bloginfo('version'), BUSINESS_HIERARCHY_MANAGER_MIN_WP_VERSION, '&lt;')) {
+    if (version_compare(get_bloginfo('version'), BUSINESS_HIERARCHY_MANAGER_MIN_WP_VERSION, '<')) {
         $requirements_met = false;
         $messages[] = sprintf(
             __('WordPress %s or higher is required. You are running version %s.', BUSINESS_HIERARCHY_MANAGER_TEXT_DOMAIN),
@@ -82,7 +82,7 @@ function business_hierarchy_manager_check_requirements() {
     }
 
     // Check PHP version
-    if (version_compare(PHP_VERSION, BUSINESS_HIERARCHY_MANAGER_MIN_PHP_VERSION, '&lt;')) {
+    if (version_compare(PHP_VERSION, BUSINESS_HIERARCHY_MANAGER_MIN_PHP_VERSION, '<')) {
         $requirements_met = false;
         $messages[] = sprintf(
             __('PHP %s or higher is required. You are running version %s.', BUSINESS_HIERARCHY_MANAGER_TEXT_DOMAIN),
@@ -229,8 +229,8 @@ add_filter('plugin_row_meta', 'business_hierarchy_manager_add_meta_links', 10, 2
  * Display admin notice if requirements are not met
  */
 function business_hierarchy_manager_admin_notice_requirements() {
-    if (version_compare(get_bloginfo('version'), BUSINESS_HIERARCHY_MANAGER_MIN_WP_VERSION, '&lt;') ||
-        version_compare(PHP_VERSION, BUSINESS_HIERARCHY_MANAGER_MIN_PHP_VERSION, '&lt;')) {
+    if (version_compare(get_bloginfo('version'), BUSINESS_HIERARCHY_MANAGER_MIN_WP_VERSION, '<') ||
+        version_compare(PHP_VERSION, BUSINESS_HIERARCHY_MANAGER_MIN_PHP_VERSION, '<')) {
         
         echo '<div>';
         echo '<p><strong>' . __('Business Hierarchy Manager', BUSINESS_HIERARCHY_MANAGER_TEXT_DOMAIN) . '</strong> ';
@@ -249,7 +249,7 @@ function business_hierarchy_manager_repair_tables($tables) {
     global $wpdb;
     
     // Add any custom tables here if you create them
-    // $tables[] = $wpdb-&gt;prefix . 'business_hierarchy_custom_table';
+    // $tables[] = $wpdb->prefix . 'business_hierarchy_custom_table';
     
     return $tables;
 }
