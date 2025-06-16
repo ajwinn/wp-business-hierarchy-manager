@@ -326,16 +326,15 @@ require_once plugin_dir_path(__FILE__) . 'includes/template-functions.php';
 
 // Include core classes
 require_once plugin_dir_path(__FILE__) . 'includes/class-business-hierarchy-manager.php';
-require_once plugin_dir_path(__FILE__) . 'includes/class-business-hierarchy-manager-loader.php';
-require_once plugin_dir_path(__FILE__) . 'includes/class-business-hierarchy-manager-i18n.php';
-require_once plugin_dir_path(__FILE__) . 'includes/class-business-hierarchy-manager-activator.php';
-require_once plugin_dir_path(__FILE__) . 'includes/class-business-hierarchy-manager-deactivator.php';
+require_once plugin_dir_path(__FILE__) . 'includes/class-loader.php';
+require_once plugin_dir_path(__FILE__) . 'includes/class-i18n.php';
+require_once plugin_dir_path(__FILE__) . 'includes/class-activator.php';
+require_once plugin_dir_path(__FILE__) . 'includes/class-deactivator.php';
 
 /**
  * The core plugin class that is used to define internationalization,
  * admin-specific hooks, and public-facing site hooks.
  */
-require_once BUSINESS_HIERARCHY_MANAGER_PATH . 'includes/class-business-hierarchy-manager.php';
 
 /**
  * Initialize the plugin
