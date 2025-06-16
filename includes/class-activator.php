@@ -173,40 +173,77 @@ class Business_Hierarchy_Manager_Activator {
             'read' => true,
             'edit_bureau_company' => true,
             'edit_bureau_companies' => true,
+            'read_bureau_company' => true,
+            'read_bureau_companies' => true,
             'delete_bureau_company' => true,
+            'delete_bureau_companies' => true,
             'edit_users' => true,
             'delete_users' => true,
             'create_users' => true,
             'edit_client_companies' => true,
             'edit_client_company' => true,
+            'read_client_companies' => true,
+            'read_client_company' => true,
             'delete_client_companies' => true,
+            'delete_client_company' => true,
             'create_client_companies' => true,
+            'edit_invitations' => true,
+            'edit_invitation' => true,
+            'read_invitations' => true,
+            'read_invitation' => true,
+            'delete_invitations' => true,
+            'delete_invitation' => true,
             'send_invitations' => true,
             'manage_bureau_team' => true
         ));
         
         add_role('bureau_member', __('Bureau Team Member', 'business-hierarchy-manager'), array(
             'read' => true,
+            'read_bureau_company' => true,
+            'read_bureau_companies' => true,
             'edit_client_companies' => true,
             'edit_client_company' => true,
+            'read_client_companies' => true,
+            'read_client_company' => true,
             'delete_client_companies' => true,
+            'delete_client_company' => true,
             'create_client_companies' => true,
+            'edit_invitations' => true,
+            'edit_invitation' => true,
+            'read_invitations' => true,
+            'read_invitation' => true,
+            'delete_invitations' => true,
+            'delete_invitation' => true,
             'send_invitations' => true
         ));
         
         // Client roles
         add_role('client_primary', __('Client Primary Member', 'business-hierarchy-manager'), array(
             'read' => true,
+            'read_client_company' => true,
             'edit_client_company' => true,
             'edit_users' => true,
             'delete_users' => true,
             'create_users' => true,
+            'edit_invitations' => true,
+            'edit_invitation' => true,
+            'read_invitations' => true,
+            'read_invitation' => true,
+            'delete_invitations' => true,
+            'delete_invitation' => true,
             'send_invitations' => true,
             'manage_client_team' => true
         ));
         
         add_role('client_member', __('Client Team Member', 'business-hierarchy-manager'), array(
             'read' => true,
+            'read_client_company' => true,
+            'read_invitations' => true,
+            'read_invitation' => true,
+            'edit_invitations' => true,
+            'edit_invitation' => true,
+            'delete_invitations' => true,
+            'delete_invitation' => true,
             'send_invitations' => true
         ));
     }
@@ -220,15 +257,41 @@ class Business_Hierarchy_Manager_Activator {
         // Add capabilities to administrator role
         $admin_role = get_role('administrator');
         if ($admin_role) {
+            // Bureau capabilities
             $admin_role->add_cap('edit_bureau_company');
             $admin_role->add_cap('edit_bureau_companies');
+            $admin_role->add_cap('read_bureau_company');
+            $admin_role->add_cap('read_bureau_companies');
             $admin_role->add_cap('delete_bureau_company');
+            $admin_role->add_cap('delete_bureau_companies');
+            
+            // Client capabilities
             $admin_role->add_cap('edit_client_company');
             $admin_role->add_cap('edit_client_companies');
+            $admin_role->add_cap('read_client_company');
+            $admin_role->add_cap('read_client_companies');
             $admin_role->add_cap('delete_client_company');
             $admin_role->add_cap('delete_client_companies');
             $admin_role->add_cap('create_client_companies');
+            
+            // Invitation capabilities
+            $admin_role->add_cap('edit_invitation');
+            $admin_role->add_cap('edit_invitations');
+            $admin_role->add_cap('read_invitation');
+            $admin_role->add_cap('read_invitations');
+            $admin_role->add_cap('delete_invitation');
+            $admin_role->add_cap('delete_invitations');
             $admin_role->add_cap('send_invitations');
+            
+            // Onboarding capabilities
+            $admin_role->add_cap('edit_onboarding');
+            $admin_role->add_cap('edit_onboardings');
+            $admin_role->add_cap('read_onboarding');
+            $admin_role->add_cap('read_onboardings');
+            $admin_role->add_cap('delete_onboarding');
+            $admin_role->add_cap('delete_onboardings');
+            
+            // User management capabilities
             $admin_role->add_cap('manage_bureau_team');
             $admin_role->add_cap('manage_client_team');
         }

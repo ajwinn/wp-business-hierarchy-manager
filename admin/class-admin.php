@@ -114,8 +114,16 @@ class Business_Hierarchy_Manager_Admin {
             'business-hierarchy-manager',
             __('Invitations', 'business-hierarchy-manager'),
             __('Invitations', 'business-hierarchy-manager'),
-            'send_invitations',
+            'edit_invitations',
             'edit.php?post_type=invitation'
+        );
+
+        add_submenu_page(
+            'business-hierarchy-manager',
+            __('Onboardings', 'business-hierarchy-manager'),
+            __('Onboardings', 'business-hierarchy-manager'),
+            'edit_onboardings',
+            'edit.php?post_type=onboarding'
         );
 
         add_submenu_page(
@@ -170,8 +178,23 @@ class Business_Hierarchy_Manager_Admin {
             'public' => false,
             'show_ui' => true,
             'show_in_menu' => false, // We'll add it to our custom menu
-            'capability_type' => 'bureau_company',
+            'capability_type' => array('bureau_company', 'bureau_companies'),
             'map_meta_cap' => true,
+            'capabilities' => array(
+                'edit_post' => 'edit_bureau_company',
+                'read_post' => 'read_bureau_company',
+                'delete_post' => 'delete_bureau_company',
+                'edit_posts' => 'edit_bureau_companies',
+                'edit_others_posts' => 'edit_bureau_companies',
+                'publish_posts' => 'edit_bureau_companies',
+                'read_private_posts' => 'read_bureau_companies',
+                'delete_posts' => 'delete_bureau_companies',
+                'delete_private_posts' => 'delete_bureau_companies',
+                'delete_published_posts' => 'delete_bureau_companies',
+                'delete_others_posts' => 'delete_bureau_companies',
+                'edit_private_posts' => 'edit_bureau_companies',
+                'edit_published_posts' => 'edit_bureau_companies',
+            ),
             'supports' => array('title', 'editor', 'custom-fields'),
             'has_archive' => false,
             'rewrite' => false,
@@ -196,8 +219,23 @@ class Business_Hierarchy_Manager_Admin {
             'public' => false,
             'show_ui' => true,
             'show_in_menu' => false, // We'll add it to our custom menu
-            'capability_type' => 'client_company',
+            'capability_type' => array('client_company', 'client_companies'),
             'map_meta_cap' => true,
+            'capabilities' => array(
+                'edit_post' => 'edit_client_company',
+                'read_post' => 'read_client_company',
+                'delete_post' => 'delete_client_company',
+                'edit_posts' => 'edit_client_companies',
+                'edit_others_posts' => 'edit_client_companies',
+                'publish_posts' => 'edit_client_companies',
+                'read_private_posts' => 'read_client_companies',
+                'delete_posts' => 'delete_client_companies',
+                'delete_private_posts' => 'delete_client_companies',
+                'delete_published_posts' => 'delete_client_companies',
+                'delete_others_posts' => 'delete_client_companies',
+                'edit_private_posts' => 'edit_client_companies',
+                'edit_published_posts' => 'edit_client_companies',
+            ),
             'supports' => array('title', 'editor', 'custom-fields'),
             'has_archive' => false,
             'rewrite' => false,
@@ -222,8 +260,23 @@ class Business_Hierarchy_Manager_Admin {
             'public' => false,
             'show_ui' => true,
             'show_in_menu' => false, // We'll add it to our custom menu
-            'capability_type' => 'invitation',
+            'capability_type' => array('invitation', 'invitations'),
             'map_meta_cap' => true,
+            'capabilities' => array(
+                'edit_post' => 'edit_invitation',
+                'read_post' => 'read_invitation',
+                'delete_post' => 'delete_invitation',
+                'edit_posts' => 'edit_invitations',
+                'edit_others_posts' => 'edit_invitations',
+                'publish_posts' => 'edit_invitations',
+                'read_private_posts' => 'read_invitations',
+                'delete_posts' => 'delete_invitations',
+                'delete_private_posts' => 'delete_invitations',
+                'delete_published_posts' => 'delete_invitations',
+                'delete_others_posts' => 'delete_invitations',
+                'edit_private_posts' => 'edit_invitations',
+                'edit_published_posts' => 'edit_invitations',
+            ),
             'supports' => array('title', 'custom-fields'),
             'has_archive' => false,
             'rewrite' => false,
@@ -248,8 +301,23 @@ class Business_Hierarchy_Manager_Admin {
             'public' => false,
             'show_ui' => true,
             'show_in_menu' => false, // We'll add it to our custom menu
-            'capability_type' => 'onboarding',
+            'capability_type' => array('onboarding', 'onboardings'),
             'map_meta_cap' => true,
+            'capabilities' => array(
+                'edit_post' => 'edit_onboarding',
+                'read_post' => 'read_onboarding',
+                'delete_post' => 'delete_onboarding',
+                'edit_posts' => 'edit_onboardings',
+                'edit_others_posts' => 'edit_onboardings',
+                'publish_posts' => 'edit_onboardings',
+                'read_private_posts' => 'read_onboardings',
+                'delete_posts' => 'delete_onboardings',
+                'delete_private_posts' => 'delete_onboardings',
+                'delete_published_posts' => 'delete_onboardings',
+                'delete_others_posts' => 'delete_onboardings',
+                'edit_private_posts' => 'edit_onboardings',
+                'edit_published_posts' => 'edit_onboardings',
+            ),
             'supports' => array('title', 'custom-fields'),
             'has_archive' => false,
             'rewrite' => false,
@@ -364,6 +432,11 @@ class Business_Hierarchy_Manager_Admin {
         $screen = get_current_screen();
         $current_user = wp_get_current_user();
 
+        // Administrators can see everything - no filtering needed
+        if (current_user_can('manage_options')) {
+            return;
+        }
+
         if ($screen && $screen->post_type === 'client_company') {
             // Filter client companies based on user permissions
             if (in_array('bureau_member', $current_user->roles) || in_array('bureau_primary', $current_user->roles)) {
@@ -371,6 +444,24 @@ class Business_Hierarchy_Manager_Admin {
                 // This will be implemented when we have the core classes
             } elseif (in_array('client_primary', $current_user->roles) || in_array('client_member', $current_user->roles)) {
                 // Client members can only see their own company
+                // This will be implemented when we have the core classes
+            }
+        }
+
+        if ($screen && $screen->post_type === 'bureau_company') {
+            // Bureau members can only see their own bureau
+            if (in_array('bureau_member', $current_user->roles) || in_array('bureau_primary', $current_user->roles)) {
+                // This will be implemented when we have the core classes
+            }
+        }
+
+        if ($screen && $screen->post_type === 'invitation') {
+            // Filter invitations based on user permissions
+            if (in_array('bureau_member', $current_user->roles) || in_array('bureau_primary', $current_user->roles)) {
+                // Bureau members can see invitations for their clients
+                // This will be implemented when we have the core classes
+            } elseif (in_array('client_primary', $current_user->roles) || in_array('client_member', $current_user->roles)) {
+                // Client members can only see their own invitations
                 // This will be implemented when we have the core classes
             }
         }
@@ -387,6 +478,11 @@ class Business_Hierarchy_Manager_Admin {
      * @return   array              The filtered capabilities
      */
     public function map_business_meta_caps($caps, $cap, $user_id, $args) {
+        // Administrators can do everything
+        if (user_can($user_id, 'manage_options')) {
+            return array('manage_options');
+        }
+
         // This will be implemented when we have the core classes
         // For now, return the original capabilities
         return $caps;
