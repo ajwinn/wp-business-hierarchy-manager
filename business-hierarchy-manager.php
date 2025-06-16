@@ -1145,201 +1145,67 @@ add_action('admin_footer', 'business_hierarchy_manager_customize_publish_section
 function business_hierarchy_manager_replace_post_editor() {
     $screen = get_current_screen();
     if ($screen && $screen->post_type === 'bureau_company' && $screen->action === 'add') {
-        ?>
-        <script type="text/javascript">
-        jQuery(document).ready(function($) {
-            // Hide the entire WordPress post editor
-            $('#poststuff').hide();
-            $('#post-body').hide();
-            $('#post-body-content').hide();
-            
-            // Create and insert our custom form
-            var customForm = `
-                <div class="wrap">
-                    <h1>Create New Bureau Company</h1>
-                    
-                    <form method="post" action="" id="bureau-company-form">
-                        <?php wp_nonce_field('business_hierarchy_manager_save_bureau', 'business_hierarchy_manager_bureau_nonce'); ?>
-                        
-                        <div class="bureau-form-container">
-                            <div class="form-section">
-                                <h2>Bureau Information</h2>
-                                <div class="form-row">
-                                    <label for="post_title">Bureau Company Name *</label>
-                                    <input type="text" id="post_title" name="post_title" required class="form-control" placeholder="Enter bureau company name">
-                                </div>
-                                
-                                <div class="form-row">
-                                    <label for="bureau_street1">Street Address 1</label>
-                                    <input type="text" id="bureau_street1" name="bureau_street1" class="form-control" placeholder="123 Main Street">
-                                </div>
-                                
-                                <div class="form-row">
-                                    <label for="bureau_street2">Street Address 2</label>
-                                    <input type="text" id="bureau_street2" name="bureau_street2" class="form-control" placeholder="Suite 100, Floor 2, etc.">
-                                </div>
-                                
-                                <div class="form-row address-row">
-                                    <div class="address-field">
-                                        <label for="bureau_city">City</label>
-                                        <input type="text" id="bureau_city" name="bureau_city" class="form-control" placeholder="City">
-                                    </div>
-                                    <div class="address-field">
-                                        <label for="bureau_state">State</label>
-                                        <input type="text" id="bureau_state" name="bureau_state" class="form-control" placeholder="State">
-                                    </div>
-                                    <div class="address-field">
-                                        <label for="bureau_zip">ZIP Code</label>
-                                        <input type="text" id="bureau_zip" name="bureau_zip" class="form-control" placeholder="12345">
-                                    </div>
-                                </div>
-                                
-                                <div class="form-row">
-                                    <label for="bureau_phone">Phone Number</label>
-                                    <input type="tel" id="bureau_phone" name="bureau_phone" class="form-control" placeholder="(555) 123-4567">
-                                </div>
-                            </div>
-                            
-                            <div class="form-section">
-                                <h2>Primary User Information</h2>
-                                <div class="form-row">
-                                    <label for="primary_first_name">First Name *</label>
-                                    <input type="text" id="primary_first_name" name="primary_first_name" required class="form-control" placeholder="Enter first name">
-                                </div>
-                                
-                                <div class="form-row">
-                                    <label for="primary_last_name">Last Name *</label>
-                                    <input type="text" id="primary_last_name" name="primary_last_name" required class="form-control" placeholder="Enter last name">
-                                </div>
-                                
-                                <div class="form-row">
-                                    <label for="primary_email">Email Address *</label>
-                                    <input type="email" id="primary_email" name="primary_email" required class="form-control" placeholder="user@example.com">
-                                    <small>This email will be used to create the primary user account</small>
-                                </div>
-                            </div>
-                            
-                            <div class="form-actions">
-                                <button type="submit" class="button button-primary button-large">Create Bureau Company</button>
-                                <a href="<?php echo admin_url('edit.php?post_type=bureau_company'); ?>" class="button button-secondary button-large">Cancel</a>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-            `;
-            
-            // Insert the form before the hidden post editor
-            $('#poststuff').before(customForm);
-            
-            // Handle form submission
-            $('#bureau-company-form').on('submit', function(e) {
-                e.preventDefault();
+        // Enqueue admin styles
+        wp_enqueue_style(
+            'business-hierarchy-manager-admin',
+            plugin_dir_url(__FILE__) . 'templates/admin/assets/admin.css',
+            array(),
+            BUSINESS_HIERARCHY_MANAGER_VERSION
+        );
+        
+        // Enqueue form JavaScript
+        wp_enqueue_script(
+            'bureau-form-js',
+            plugin_dir_url(__FILE__) . 'templates/admin/assets/bureau-form.js',
+            array('jquery'),
+            BUSINESS_HIERARCHY_MANAGER_VERSION,
+            true
+        );
+        
+        // Add custom CSS to hide WordPress elements and fix layout
+        add_action('admin_head', function() {
+            ?>
+            <style>
+                /* Hide WordPress post editor elements */
+                #poststuff {
+                    display: none !important;
+                }
                 
-                // Show loading state
-                var submitBtn = $(this).find('button[type="submit"]');
-                var originalText = submitBtn.text();
-                submitBtn.text('Creating...').prop('disabled', true);
+                /* Ensure proper WordPress admin layout */
+                .wrap {
+                    margin: 10px 20px 0 2px;
+                }
                 
-                // Submit the form using WordPress AJAX or redirect
-                this.submit();
-            });
+                /* Fix container width to work with admin sidebar */
+                .bureau-form-container {
+                    max-width: 100%;
+                    margin: 0;
+                    padding: 0;
+                }
+                
+                /* Ensure form doesn't extend behind sidebar */
+                .bureau-form-container .wrap {
+                    margin-right: 20px;
+                }
+                
+                /* Responsive adjustments */
+                @media screen and (max-width: 960px) {
+                    .bureau-form-container .wrap {
+                        margin-right: 10px;
+                    }
+                }
+            </style>
+            <?php
         });
-        </script>
         
-        <style>
-        .bureau-form-container {
-            max-width: 800px;
-            margin: 20px 0;
-            background: #fff;
-            border: 1px solid #ccd0d4;
-            border-radius: 4px;
-            padding: 30px;
-        }
-        
-        .form-section {
-            margin-bottom: 40px;
-        }
-        
-        .form-section h2 {
-            margin: 0 0 20px 0;
-            padding-bottom: 10px;
-            border-bottom: 2px solid #0073aa;
-            color: #23282d;
-            font-size: 18px;
-        }
-        
-        .form-row {
-            margin-bottom: 20px;
-        }
-        
-        .form-row label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: 600;
-            color: #23282d;
-        }
-        
-        .form-control {
-            width: 100%;
-            max-width: 400px;
-            padding: 8px 12px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            font-size: 14px;
-            line-height: 1.4;
-        }
-        
-        .form-control:focus {
-            border-color: #0073aa;
-            box-shadow: 0 0 0 1px #0073aa;
-            outline: none;
-        }
-        
-        .address-row {
-            display: flex;
-            gap: 15px;
-            align-items: flex-end;
-        }
-        
-        .address-field {
-            flex: 1;
-        }
-        
-        .address-field .form-control {
-            max-width: none;
-        }
-        
-        .form-row small {
-            display: block;
-            margin-top: 5px;
-            color: #666;
-            font-style: italic;
-        }
-        
-        .form-actions {
-            margin-top: 30px;
-            padding-top: 20px;
-            border-top: 1px solid #ddd;
-        }
-        
-        .form-actions .button {
-            margin-right: 10px;
-        }
-        
-        .button-primary {
-            background: #0073aa;
-            border-color: #0073aa;
-            color: #fff;
-        }
-        
-        .button-primary:hover {
-            background: #005a87;
-            border-color: #005a87;
-        }
-        </style>
-        <?php
+        // Load our template in the proper admin content area
+        add_action('admin_notices', function() {
+            echo '<div class="bureau-form-container">';
+            include plugin_dir_path(__FILE__) . 'templates/admin/bureau-form.php';
+            echo '</div>';
+        });
     }
 }
-add_action('admin_head', 'business_hierarchy_manager_replace_post_editor');
+add_action('admin_init', 'business_hierarchy_manager_replace_post_editor');
 
 // That's all, folks! The rest happens in the class files.
