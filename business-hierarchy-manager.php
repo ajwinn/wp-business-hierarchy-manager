@@ -1162,44 +1162,21 @@ function business_hierarchy_manager_replace_post_editor() {
             true
         );
         
-        // Add custom CSS to hide WordPress elements and fix layout
-        add_action('admin_head', function() {
-            ?>
-            <style>
-                /* Hide WordPress post editor elements */
-                #poststuff {
-                    display: none !important;
-                }
-                
-                /* Ensure proper WordPress admin layout */
-                .wrap {
-                    margin: 10px 20px 0 2px;
-                }
-                
-                /* Fix container width to work with admin sidebar */
-                .bureau-form-container {
-                    max-width: 100%;
-                    margin: 0;
-                    padding: 0;
-                }
-                
-                /* Ensure form doesn't extend behind sidebar */
-                .bureau-form-container .wrap {
-                    margin-right: 20px;
-                }
-                
-                /* Responsive adjustments */
-                @media screen and (max-width: 960px) {
-                    .bureau-form-container .wrap {
-                        margin-right: 10px;
-                    }
-                }
-            </style>
-            <?php
-        });
-        
-        // Load our template in the proper admin content area
-        add_action('admin_notices', function() {
+        // Completely replace the post editor content
+        add_action('edit_form_after_title', function() {
+            // Hide the entire post editor
+            echo '<style>
+                #poststuff { display: none !important; }
+                #post-body { display: none !important; }
+                #post-body-content { display: none !important; }
+                #post { display: none !important; }
+                .wp-editor-wrap { display: none !important; }
+                #titlediv { display: none !important; }
+                #postdivrich { display: none !important; }
+                #postdiv { display: none !important; }
+            </style>';
+            
+            // Output our custom form
             echo '<div class="bureau-form-container">';
             include plugin_dir_path(__FILE__) . 'templates/admin/bureau-form.php';
             echo '</div>';

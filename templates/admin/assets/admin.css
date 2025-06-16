@@ -8,12 +8,38 @@
 .bureau-form-container {
     position: relative;
     z-index: 1;
+    margin: 20px 0;
+    display: block !important;
+    visibility: visible !important;
 }
 
 .bureau-form-container .wrap {
-    margin: 10px 20px 0 2px;
+    margin: 0;
     max-width: 100%;
     box-sizing: border-box;
+    display: block !important;
+    visibility: visible !important;
+}
+
+/* Ensure our form is always visible */
+#bureau-company-form {
+    display: block !important;
+    visibility: visible !important;
+}
+
+/* Override any WordPress hiding */
+.bureau-form-container,
+.bureau-form-container * {
+    display: block !important;
+    visibility: visible !important;
+}
+
+.bureau-form-container .grid {
+    display: grid !important;
+}
+
+.bureau-form-container .flex {
+    display: flex !important;
 }
 
 /* Ensure form doesn't interfere with WordPress admin elements */
@@ -39,30 +65,12 @@
     border-top: 1px solid #ccd0d4;
 }
 
-/* Fix for WordPress admin sidebar */
-@media screen and (min-width: 961px) {
-    .bureau-form-container .wrap {
-        margin-right: 20px;
-    }
-}
-
-@media screen and (max-width: 960px) {
-    .bureau-form-container .wrap {
-        margin-right: 10px;
-    }
-}
-
 /* Ensure form elements don't conflict with WordPress admin */
 .bureau-form-container input[type="text"],
 .bureau-form-container input[type="email"],
 .bureau-form-container input[type="tel"] {
     max-width: 100%;
     box-sizing: border-box;
-}
-
-.bureau-form-container .grid {
-    display: grid;
-    gap: 1.5rem;
 }
 
 @media screen and (min-width: 768px) {
