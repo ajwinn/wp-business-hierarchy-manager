@@ -857,6 +857,7 @@ function business_hierarchy_manager_remove_default_meta_boxes() {
         remove_meta_box('slugdiv', 'bureau_company', 'normal');
         remove_meta_box('authordiv', 'bureau_company', 'normal');
         remove_meta_box('postimagediv', 'bureau_company', 'normal');
+        remove_meta_box('postcustom', 'bureau_company', 'normal'); // Custom Fields
     }
 }
 add_action('add_meta_boxes', 'business_hierarchy_manager_remove_default_meta_boxes', 999);
@@ -903,6 +904,8 @@ function business_hierarchy_manager_hide_content_editor() {
         echo '.bureau-form .form-table td { padding: 15px 10px; }';
         echo '.bureau-form .form-table input[type="text"], .bureau-form .form-table input[type="email"], .bureau-form .form-table input[type="tel"] { width: 100%; max-width: 400px; }';
         echo '.bureau-form .description { color: #666; font-style: italic; margin-top: 5px; }';
+        echo '.editor-post-visibility { display: none !important; }';
+        echo '.editor-post-visibility__dialog { display: none !important; }';
         echo '</style>';
     }
 }
@@ -1028,5 +1031,40 @@ function business_hierarchy_manager_primary_user_callback($post) {
     </div>
     <?php
 }
+
+/**
+ * Customize the publish section for bureau companies
+ */
+function business_hierarchy_manager_customize_publish_section() {
+    $screen = get_current_screen();
+    if ($screen && $screen->post_type === 'bureau_company') {
+        ?>
+        <script type="text/javascript">
+        jQuery(document).ready(function($) {
+            // Change "Publish" button text to "Create Bureau"
+            $('.editor-post-publish-button').text('Create Bureau');
+            $('.editor-post-publish-panel__toggle').text('Create Bureau');
+            
+            // Change "Update" button text to "Update Bureau"
+            $('.editor-post-publish-button').each(function() {
+                if ($(this).text() === 'Update') {
+                    $(this).text('Update Bureau');
+                }
+            });
+            
+            // Change "Publish" panel title
+            $('.editor-post-publish-panel__header-publish-button').text('Create Bureau');
+            
+            // Hide the "Visibility" section since it's not relevant for bureaus
+            $('.editor-post-visibility').hide();
+            
+            // Change "Status" to "Bureau Status"
+            $('.editor-post-status').find('label').text('Bureau Status:');
+        });
+        </script>
+        <?php
+    }
+}
+add_action('admin_footer', 'business_hierarchy_manager_customize_publish_section');
 
 // That's all, folks! The rest happens in the class files.
