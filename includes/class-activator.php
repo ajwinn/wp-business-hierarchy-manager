@@ -32,8 +32,8 @@ class Business_Hierarchy_Manager_Activator {
         // Set default capabilities
         self::set_default_capabilities();
 
-        // Flush rewrite rules for custom post types
-        flush_rewrite_rules();
+        // Note: Removed flush_rewrite_rules() to avoid memory issues
+        // Rewrite rules will be flushed when custom post types are registered on next page load
 
         // Log activation
         self::log_activation();
@@ -46,6 +46,13 @@ class Business_Hierarchy_Manager_Activator {
      */
     private static function create_database_tables() {
         global $wpdb;
+
+        // Check if tables already exist to prevent duplicate creation
+        $existing_tables = get_option('business_hierarchy_manager_tables', array());
+        if (!empty($existing_tables)) {
+            // Tables already exist, skip creation
+            return;
+        }
 
         $charset_collate = $wpdb->get_charset_collate();
 
@@ -168,84 +175,95 @@ class Business_Hierarchy_Manager_Activator {
      * @since    1.0.0
      */
     private static function create_default_roles() {
-        // Bureau roles
-        add_role('bureau_primary', __('Bureau Primary Member', 'business-hierarchy-manager'), array(
-            'read' => true,
-            'edit_bureau_company' => true,
-            'edit_bureau_companies' => true,
-            'read_bureau_company' => true,
-            'read_bureau_companies' => true,
-            'delete_bureau_company' => true,
-            'delete_bureau_companies' => true,
-            'edit_users' => true,
-            'delete_users' => true,
-            'create_users' => true,
-            'edit_client_companies' => true,
-            'edit_client_company' => true,
-            'read_client_companies' => true,
-            'read_client_company' => true,
-            'delete_client_companies' => true,
-            'delete_client_company' => true,
-            'create_client_companies' => true,
-            'edit_invitations' => true,
-            'edit_invitation' => true,
-            'read_invitations' => true,
-            'read_invitation' => true,
-            'delete_invitations' => true,
-            'delete_invitation' => true,
-            'send_invitations' => true,
-            'manage_bureau_team' => true
-        ));
+        // Check if roles already exist to prevent duplicates
+        $existing_roles = wp_roles()->get_names();
         
-        add_role('bureau_member', __('Bureau Team Member', 'business-hierarchy-manager'), array(
-            'read' => true,
-            'read_bureau_company' => true,
-            'read_bureau_companies' => true,
-            'edit_client_companies' => true,
-            'edit_client_company' => true,
-            'read_client_companies' => true,
-            'read_client_company' => true,
-            'delete_client_companies' => true,
-            'delete_client_company' => true,
-            'create_client_companies' => true,
-            'edit_invitations' => true,
-            'edit_invitation' => true,
-            'read_invitations' => true,
-            'read_invitation' => true,
-            'delete_invitations' => true,
-            'delete_invitation' => true,
-            'send_invitations' => true
-        ));
+        // Bureau roles
+        if (!array_key_exists('bureau_primary', $existing_roles)) {
+            add_role('bureau_primary', __('Bureau Primary Member', 'business-hierarchy-manager'), array(
+                'read' => true,
+                'edit_bureau_company' => true,
+                'edit_bureau_companies' => true,
+                'read_bureau_company' => true,
+                'read_bureau_companies' => true,
+                'delete_bureau_company' => true,
+                'delete_bureau_companies' => true,
+                'edit_users' => true,
+                'delete_users' => true,
+                'create_users' => true,
+                'edit_client_companies' => true,
+                'edit_client_company' => true,
+                'read_client_companies' => true,
+                'read_client_company' => true,
+                'delete_client_companies' => true,
+                'delete_client_company' => true,
+                'create_client_companies' => true,
+                'edit_invitations' => true,
+                'edit_invitation' => true,
+                'read_invitations' => true,
+                'read_invitation' => true,
+                'delete_invitations' => true,
+                'delete_invitation' => true,
+                'send_invitations' => true,
+                'manage_bureau_team' => true
+            ));
+        }
+        
+        if (!array_key_exists('bureau_member', $existing_roles)) {
+            add_role('bureau_member', __('Bureau Team Member', 'business-hierarchy-manager'), array(
+                'read' => true,
+                'read_bureau_company' => true,
+                'read_bureau_companies' => true,
+                'edit_client_companies' => true,
+                'edit_client_company' => true,
+                'read_client_companies' => true,
+                'read_client_company' => true,
+                'delete_client_companies' => true,
+                'delete_client_company' => true,
+                'create_client_companies' => true,
+                'edit_invitations' => true,
+                'edit_invitation' => true,
+                'read_invitations' => true,
+                'read_invitation' => true,
+                'delete_invitations' => true,
+                'delete_invitation' => true,
+                'send_invitations' => true
+            ));
+        }
         
         // Client roles
-        add_role('client_primary', __('Client Primary Member', 'business-hierarchy-manager'), array(
-            'read' => true,
-            'read_client_company' => true,
-            'edit_client_company' => true,
-            'edit_users' => true,
-            'delete_users' => true,
-            'create_users' => true,
-            'edit_invitations' => true,
-            'edit_invitation' => true,
-            'read_invitations' => true,
-            'read_invitation' => true,
-            'delete_invitations' => true,
-            'delete_invitation' => true,
-            'send_invitations' => true,
-            'manage_client_team' => true
-        ));
+        if (!array_key_exists('client_primary', $existing_roles)) {
+            add_role('client_primary', __('Client Primary Member', 'business-hierarchy-manager'), array(
+                'read' => true,
+                'read_client_company' => true,
+                'edit_client_company' => true,
+                'edit_users' => true,
+                'delete_users' => true,
+                'create_users' => true,
+                'edit_invitations' => true,
+                'edit_invitation' => true,
+                'read_invitations' => true,
+                'read_invitation' => true,
+                'delete_invitations' => true,
+                'delete_invitation' => true,
+                'send_invitations' => true,
+                'manage_client_team' => true
+            ));
+        }
         
-        add_role('client_member', __('Client Team Member', 'business-hierarchy-manager'), array(
-            'read' => true,
-            'read_client_company' => true,
-            'read_invitations' => true,
-            'read_invitation' => true,
-            'edit_invitations' => true,
-            'edit_invitation' => true,
-            'delete_invitations' => true,
-            'delete_invitation' => true,
-            'send_invitations' => true
-        ));
+        if (!array_key_exists('client_member', $existing_roles)) {
+            add_role('client_member', __('Client Team Member', 'business-hierarchy-manager'), array(
+                'read' => true,
+                'read_client_company' => true,
+                'read_invitations' => true,
+                'read_invitation' => true,
+                'edit_invitations' => true,
+                'edit_invitation' => true,
+                'delete_invitations' => true,
+                'delete_invitation' => true,
+                'send_invitations' => true
+            ));
+        }
     }
 
     /**
@@ -257,43 +275,53 @@ class Business_Hierarchy_Manager_Activator {
         // Add capabilities to administrator role
         $admin_role = get_role('administrator');
         if ($admin_role) {
-            // Bureau capabilities
-            $admin_role->add_cap('edit_bureau_company');
-            $admin_role->add_cap('edit_bureau_companies');
-            $admin_role->add_cap('read_bureau_company');
-            $admin_role->add_cap('read_bureau_companies');
-            $admin_role->add_cap('delete_bureau_company');
-            $admin_role->add_cap('delete_bureau_companies');
+            // Define all capabilities to add
+            $capabilities = array(
+                // Bureau capabilities
+                'edit_bureau_company',
+                'edit_bureau_companies',
+                'read_bureau_company',
+                'read_bureau_companies',
+                'delete_bureau_company',
+                'delete_bureau_companies',
+                
+                // Client capabilities
+                'edit_client_company',
+                'edit_client_companies',
+                'read_client_company',
+                'read_client_companies',
+                'delete_client_company',
+                'delete_client_companies',
+                'create_client_companies',
+                
+                // Invitation capabilities
+                'edit_invitation',
+                'edit_invitations',
+                'read_invitation',
+                'read_invitations',
+                'delete_invitation',
+                'delete_invitations',
+                'send_invitations',
+                
+                // Onboarding capabilities
+                'edit_onboarding',
+                'edit_onboardings',
+                'read_onboarding',
+                'read_onboardings',
+                'delete_onboarding',
+                'delete_onboardings',
+                
+                // User management capabilities
+                'manage_bureau_team',
+                'manage_client_team'
+            );
             
-            // Client capabilities
-            $admin_role->add_cap('edit_client_company');
-            $admin_role->add_cap('edit_client_companies');
-            $admin_role->add_cap('read_client_company');
-            $admin_role->add_cap('read_client_companies');
-            $admin_role->add_cap('delete_client_company');
-            $admin_role->add_cap('delete_client_companies');
-            $admin_role->add_cap('create_client_companies');
-            
-            // Invitation capabilities
-            $admin_role->add_cap('edit_invitation');
-            $admin_role->add_cap('edit_invitations');
-            $admin_role->add_cap('read_invitation');
-            $admin_role->add_cap('read_invitations');
-            $admin_role->add_cap('delete_invitation');
-            $admin_role->add_cap('delete_invitations');
-            $admin_role->add_cap('send_invitations');
-            
-            // Onboarding capabilities
-            $admin_role->add_cap('edit_onboarding');
-            $admin_role->add_cap('edit_onboardings');
-            $admin_role->add_cap('read_onboarding');
-            $admin_role->add_cap('read_onboardings');
-            $admin_role->add_cap('delete_onboarding');
-            $admin_role->add_cap('delete_onboardings');
-            
-            // User management capabilities
-            $admin_role->add_cap('manage_bureau_team');
-            $admin_role->add_cap('manage_client_team');
+            // Add capabilities only if they don't already exist
+            foreach ($capabilities as $cap) {
+                if (!$admin_role->has_cap($cap)) {
+                    $admin_role->add_cap($cap);
+                }
+            }
         }
     }
 
