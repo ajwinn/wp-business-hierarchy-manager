@@ -321,6 +321,16 @@ function business_hierarchy_manager_autoloader($class_name) {
 }
 spl_autoload_register('business_hierarchy_manager_autoloader');
 
+// Include template functions
+require_once plugin_dir_path(__FILE__) . 'includes/template-functions.php';
+
+// Include core classes
+require_once plugin_dir_path(__FILE__) . 'includes/class-business-hierarchy-manager.php';
+require_once plugin_dir_path(__FILE__) . 'includes/class-business-hierarchy-manager-loader.php';
+require_once plugin_dir_path(__FILE__) . 'includes/class-business-hierarchy-manager-i18n.php';
+require_once plugin_dir_path(__FILE__) . 'includes/class-business-hierarchy-manager-activator.php';
+require_once plugin_dir_path(__FILE__) . 'includes/class-business-hierarchy-manager-deactivator.php';
+
 /**
  * The core plugin class that is used to define internationalization,
  * admin-specific hooks, and public-facing site hooks.
@@ -560,23 +570,19 @@ function business_hierarchy_manager_admin_page() {
         echo '<div class="notice notice-success is-dismissible"><p>Bureau company created successfully!</p></div>';
     }
     
-    echo '<div class="wrap">';
-    echo '<h1>Business Hierarchy Manager</h1>';
-    echo '<p>Plugin is activated successfully!</p>';
-    echo '<p>Version: ' . BUSINESS_HIERARCHY_MANAGER_VERSION . '</p>';
-    echo '<p>Database tables created: ' . (get_option('business_hierarchy_manager_tables') ? 'Yes' : 'No') . '</p>';
-    echo '<p>User roles created: ' . (get_role('bureau_primary') ? 'Yes' : 'No') . '</p>';
-    echo '</div>';
+    // Load admin page template
+    business_hierarchy_manager_load_admin_template('dashboard.php', array(
+        'version' => BUSINESS_HIERARCHY_MANAGER_VERSION,
+        'tables_created' => get_option('business_hierarchy_manager_tables') ? 'Yes' : 'No',
+        'roles_created' => get_role('bureau_primary') ? 'Yes' : 'No',
+    ));
 }
 
 /**
  * Settings page
  */
 function business_hierarchy_manager_settings_page() {
-    echo '<div class="wrap">';
-    echo '<h1>Business Hierarchy Manager Settings</h1>';
-    echo '<p>Settings page coming soon...</p>';
-    echo '</div>';
+    business_hierarchy_manager_load_admin_template('settings.php');
 }
 
 /**
@@ -592,7 +598,7 @@ function business_hierarchy_manager_test_page() {
     );
     
     // Load the test template
-    include plugin_dir_path(__FILE__) . 'templates/admin/test-page.php';
+    business_hierarchy_manager_load_admin_template('test-page.php');
 }
 
 /**
@@ -617,7 +623,7 @@ function business_hierarchy_manager_add_bureau_page() {
     );
     
     // Load the bureau form template
-    include plugin_dir_path(__FILE__) . 'templates/admin/bureau-form.php';
+    business_hierarchy_manager_load_admin_template('bureau-form.php');
 }
 
 /**
@@ -1054,111 +1060,33 @@ function business_hierarchy_manager_save_bureau_fields($post_id, $post) {
 function business_hierarchy_manager_bureau_details_callback($post) {
     wp_nonce_field('business_hierarchy_manager_save_bureau', 'business_hierarchy_manager_bureau_nonce');
     
-    $street1 = get_post_meta($post->ID, '_bureau_street1', true);
-    $street2 = get_post_meta($post->ID, '_bureau_street2', true);
-    $city = get_post_meta($post->ID, '_bureau_city', true);
-    $state = get_post_meta($post->ID, '_bureau_state', true);
-    $zip = get_post_meta($post->ID, '_bureau_zip', true);
-    $phone = get_post_meta($post->ID, '_bureau_phone', true);
+    // Get data for template
+    $data = array(
+        'street1' => get_post_meta($post->ID, '_bureau_street1', true),
+        'street2' => get_post_meta($post->ID, '_bureau_street2', true),
+        'city' => get_post_meta($post->ID, '_bureau_city', true),
+        'state' => get_post_meta($post->ID, '_bureau_state', true),
+        'zip' => get_post_meta($post->ID, '_bureau_zip', true),
+        'phone' => get_post_meta($post->ID, '_bureau_phone', true),
+    );
     
-    ?>
-    <div class="bureau-form">
-        <table class="form-table">
-            <tr>
-                <th scope="row">
-                    <label for="bureau_street1">Street Address 1</label>
-                </th>
-                <td>
-                    <input type="text" id="bureau_street1" name="bureau_street1" value="<?php echo esc_attr($street1); ?>" class="regular-text" />
-                    <p class="description">Enter the primary street address</p>
-                </td>
-            </tr>
-            <tr>
-                <th scope="row">
-                    <label for="bureau_street2">Street Address 2</label>
-                </th>
-                <td>
-                    <input type="text" id="bureau_street2" name="bureau_street2" value="<?php echo esc_attr($street2); ?>" class="regular-text" />
-                    <p class="description">Suite, floor, or additional address information</p>
-                </td>
-            </tr>
-            <tr>
-                <th scope="row">
-                    <label for="bureau_city">City</label>
-                </th>
-                <td>
-                    <input type="text" id="bureau_city" name="bureau_city" value="<?php echo esc_attr($city); ?>" class="regular-text" />
-                </td>
-            </tr>
-            <tr>
-                <th scope="row">
-                    <label for="bureau_state">State</label>
-                </th>
-                <td>
-                    <input type="text" id="bureau_state" name="bureau_state" value="<?php echo esc_attr($state); ?>" class="regular-text" />
-                </td>
-            </tr>
-            <tr>
-                <th scope="row">
-                    <label for="bureau_zip">ZIP Code</label>
-                </th>
-                <td>
-                    <input type="text" id="bureau_zip" name="bureau_zip" value="<?php echo esc_attr($zip); ?>" class="regular-text" />
-                </td>
-            </tr>
-            <tr>
-                <th scope="row">
-                    <label for="bureau_phone">Phone</label>
-                </th>
-                <td>
-                    <input type="tel" id="bureau_phone" name="bureau_phone" value="<?php echo esc_attr($phone); ?>" class="regular-text" />
-                    <p class="description">Enter the bureau's phone number</p>
-                </td>
-            </tr>
-        </table>
-    </div>
-    <?php
+    // Load template with data
+    business_hierarchy_manager_load_meta_box('bureau-details.php', $data);
 }
 
 /**
  * Primary user details meta box callback
  */
 function business_hierarchy_manager_primary_user_callback($post) {
-    $primary_first_name = get_post_meta($post->ID, '_primary_first_name', true);
-    $primary_last_name = get_post_meta($post->ID, '_primary_last_name', true);
-    $primary_email = get_post_meta($post->ID, '_primary_email', true);
+    // Get data for template
+    $data = array(
+        'primary_first_name' => get_post_meta($post->ID, '_primary_first_name', true),
+        'primary_last_name' => get_post_meta($post->ID, '_primary_last_name', true),
+        'primary_email' => get_post_meta($post->ID, '_primary_email', true),
+    );
     
-    ?>
-    <div class="bureau-form">
-        <table class="form-table">
-            <tr>
-                <th scope="row">
-                    <label for="primary_first_name">First Name</label>
-                </th>
-                <td>
-                    <input type="text" id="primary_first_name" name="primary_first_name" value="<?php echo esc_attr($primary_first_name); ?>" class="regular-text" />
-                </td>
-            </tr>
-            <tr>
-                <th scope="row">
-                    <label for="primary_last_name">Last Name</label>
-                </th>
-                <td>
-                    <input type="text" id="primary_last_name" name="primary_last_name" value="<?php echo esc_attr($primary_last_name); ?>" class="regular-text" />
-                </td>
-            </tr>
-            <tr>
-                <th scope="row">
-                    <label for="primary_email">Email</label>
-                </th>
-                <td>
-                    <input type="email" id="primary_email" name="primary_email" value="<?php echo esc_attr($primary_email); ?>" class="regular-text" />
-                    <p class="description">This email will be used to create the primary user account</p>
-                </td>
-            </tr>
-        </table>
-    </div>
-    <?php
+    // Load template with data
+    business_hierarchy_manager_load_meta_box('primary-user.php', $data);
 }
 
 /**
