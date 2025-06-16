@@ -128,8 +128,106 @@ function activate_business_hierarchy_manager() {
     // Check requirements before activation
     business_hierarchy_manager_check_requirements();
     
-    require_once BUSINESS_HIERARCHY_MANAGER_PATH . 'includes/class-activator.php';
-    Business_Hierarchy_Manager_Activator::activate();
+    // Set activation flag first
+    add_option('business_hierarchy_manager_activated', true);
+    add_option('business_hierarchy_manager_version', BUSINESS_HIERARCHY_MANAGER_VERSION);
+    
+    // Create database tables (minimal approach)
+    business_hierarchy_manager_create_tables();
+    
+    // Create user roles (minimal approach)
+    business_hierarchy_manager_create_roles();
+    
+    // Set admin capabilities (minimal approach)
+    business_hierarchy_manager_set_admin_capabilities();
+    
+    // Log activation
+    update_option('business_hierarchy_manager_activation_log', array(
+        'version' => BUSINESS_HIERARCHY_MANAGER_VERSION,
+        'timestamp' => current_time('mysql'),
+        'user_id' => get_current_user_id()
+    ));
+}
+
+/**
+ * Minimal database table creation
+ */
+function business_hierarchy_manager_create_tables() {
+    global $wpdb;
+    
+    // Check if tables already exist
+    $existing_tables = get_option('business_hierarchy_manager_tables', array());
+    if (!empty($existing_tables)) {
+        return;
+    }
+    
+    $charset_collate = $wpdb->get_charset_collate();
+    
+    // Only create essential tables for now
+    $table_user_companies = $wpdb->prefix . 'business_hierarchy_user_companies';
+    $sql_user_companies = "CREATE TABLE $table_user_companies (
+        id mediumint(9) NOT NULL AUTO_INCREMENT,
+        user_id bigint(20) NOT NULL,
+        company_id bigint(20) NOT NULL,
+        company_type varchar(20) NOT NULL,
+        role varchar(50) NOT NULL,
+        is_primary tinyint(1) DEFAULT 0,
+        created_at datetime DEFAULT CURRENT_TIMESTAMP,
+        PRIMARY KEY (id),
+        UNIQUE KEY user_company (user_id, company_id)
+    ) $charset_collate;";
+    
+    require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
+    dbDelta($sql_user_companies);
+    
+    update_option('business_hierarchy_manager_tables', array(
+        'user_companies' => $table_user_companies
+    ));
+}
+
+/**
+ * Minimal user role creation
+ */
+function business_hierarchy_manager_create_roles() {
+    $existing_roles = wp_roles()->get_names();
+    
+    if (!array_key_exists('bureau_primary', $existing_roles)) {
+        add_role('bureau_primary', 'Bureau Primary Member', array(
+            'read' => true,
+            'edit_bureau_company' => true,
+            'edit_bureau_companies' => true,
+            'edit_client_companies' => true,
+            'send_invitations' => true
+        ));
+    }
+    
+    if (!array_key_exists('client_primary', $existing_roles)) {
+        add_role('client_primary', 'Client Primary Member', array(
+            'read' => true,
+            'edit_client_company' => true,
+            'send_invitations' => true
+        ));
+    }
+}
+
+/**
+ * Minimal admin capability assignment
+ */
+function business_hierarchy_manager_set_admin_capabilities() {
+    $admin_role = get_role('administrator');
+    if ($admin_role) {
+        $caps = array(
+            'edit_bureau_company', 'edit_bureau_companies',
+            'edit_client_company', 'edit_client_companies',
+            'send_invitations'
+        );
+        
+        foreach ($caps as $cap) {
+            if (!$admin_role->has_cap($cap)) {
+                $admin_role->add_cap($cap);
+            }
+        }
+    }
 }
 
 /**
@@ -188,10 +286,11 @@ require_once BUSINESS_HIERARCHY_MANAGER_PATH . 'includes/class-business-hierarch
 /**
  * Initialize the plugin
  */
-function run_business_hierarchy_manager() {
-    $plugin = new Business_Hierarchy_Manager();
-    $plugin->run();
-}
+// Temporarily disabled to prevent memory issues during activation
+// function run_business_hierarchy_manager() {
+//     $plugin = new Business_Hierarchy_Manager();
+//     $plugin->run();
+// }
 
 /**
  * Begin execution of the plugin.
@@ -200,7 +299,8 @@ function run_business_hierarchy_manager() {
  * then kicking off the plugin from this point in the file does
  * not affect the page life cycle.
  */
-add_action('plugins_loaded', 'run_business_hierarchy_manager');
+// Temporarily disabled to prevent memory issues during activation
+// add_action('plugins_loaded', 'run_business_hierarchy_manager');
 
 /**
  * Add action links to plugin page
@@ -304,5 +404,34 @@ function business_hierarchy_manager_check_dependencies() {
     }
 }
 add_action('admin_init', 'business_hierarchy_manager_check_dependencies');
+
+/**
+ * Add basic admin menu
+ */
+function business_hierarchy_manager_admin_menu() {
+    add_menu_page(
+        'Business Hierarchy Manager',
+        'Business Hierarchy',
+        'manage_options',
+        'business-hierarchy-manager',
+        'business_hierarchy_manager_admin_page',
+        'dashicons-groups',
+        30
+    );
+}
+add_action('admin_menu', 'business_hierarchy_manager_admin_menu');
+
+/**
+ * Basic admin page
+ */
+function business_hierarchy_manager_admin_page() {
+    echo '<div class="wrap">';
+    echo '<h1>Business Hierarchy Manager</h1>';
+    echo '<p>Plugin is activated successfully!</p>';
+    echo '<p>Version: ' . BUSINESS_HIERARCHY_MANAGER_VERSION . '</p>';
+    echo '<p>Database tables created: ' . (get_option('business_hierarchy_manager_tables') ? 'Yes' : 'No') . '</p>';
+    echo '<p>User roles created: ' . (get_role('bureau_primary') ? 'Yes' : 'No') . '</p>';
+    echo '</div>';
+}
 
 // That's all, folks! The rest happens in the class files.
