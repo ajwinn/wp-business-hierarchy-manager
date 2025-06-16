@@ -22,6 +22,7 @@
 - [x] Post type management screens
 - [x] Settings page placeholder
 - [x] Proper capability-based access control
+- [x] Custom bureau company form with business-specific fields
 
 ### Documentation
 - [x] Comprehensive README.md
