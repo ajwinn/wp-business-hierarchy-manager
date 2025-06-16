@@ -790,4 +790,218 @@ function business_hierarchy_manager_map_meta_caps($caps, $cap, $user_id, $args) 
 }
 add_filter('map_meta_cap', 'business_hierarchy_manager_map_meta_caps', 10, 4);
 
+/**
+ * Custom admin page handling for bureau companies
+ */
+function business_hierarchy_manager_admin_init() {
+    // Only run on admin pages
+    if (!is_admin()) {
+        return;
+    }
+    
+    // Check if we're on a bureau company edit page
+    $screen = get_current_screen();
+    if ($screen && $screen->post_type === 'bureau_company') {
+        // Remove default meta boxes
+        add_action('add_meta_boxes', 'business_hierarchy_manager_remove_default_meta_boxes', 999);
+        
+        // Add custom meta boxes
+        add_action('add_meta_boxes', 'business_hierarchy_manager_add_bureau_meta_boxes');
+        
+        // Save custom fields
+        add_action('save_post', 'business_hierarchy_manager_save_bureau_fields', 10, 2);
+        
+        // Customize the title placeholder
+        add_filter('enter_title_here', 'business_hierarchy_manager_bureau_title_placeholder');
+        
+        // Hide the content editor
+        add_action('admin_head', 'business_hierarchy_manager_hide_content_editor');
+    }
+}
+add_action('admin_init', 'business_hierarchy_manager_admin_init');
+
+/**
+ * Remove default meta boxes for bureau companies
+ */
+function business_hierarchy_manager_remove_default_meta_boxes() {
+    remove_meta_box('postexcerpt', 'bureau_company', 'normal');
+    remove_meta_box('trackbacksdiv', 'bureau_company', 'normal');
+    remove_meta_box('commentstatusdiv', 'bureau_company', 'normal');
+    remove_meta_box('commentsdiv', 'bureau_company', 'normal');
+    remove_meta_box('slugdiv', 'bureau_company', 'normal');
+    remove_meta_box('authordiv', 'bureau_company', 'normal');
+    remove_meta_box('postimagediv', 'bureau_company', 'normal');
+}
+
+/**
+ * Add custom meta boxes for bureau companies
+ */
+function business_hierarchy_manager_add_bureau_meta_boxes() {
+    add_meta_box(
+        'bureau_details',
+        'Bureau Details',
+        'business_hierarchy_manager_bureau_details_callback',
+        'bureau_company',
+        'normal',
+        'high'
+    );
+    
+    add_meta_box(
+        'primary_user_details',
+        'Primary User Details',
+        'business_hierarchy_manager_primary_user_callback',
+        'bureau_company',
+        'normal',
+        'high'
+    );
+}
+
+/**
+ * Bureau details meta box callback
+ */
+function business_hierarchy_manager_bureau_details_callback($post) {
+    wp_nonce_field('business_hierarchy_manager_save_bureau', 'business_hierarchy_manager_bureau_nonce');
+    
+    $location = get_post_meta($post->ID, '_bureau_location', true);
+    $phone = get_post_meta($post->ID, '_bureau_phone', true);
+    
+    ?>
+    <div class="bureau-form">
+        <table class="form-table">
+            <tr>
+                <th scope="row">
+                    <label for="bureau_location">Location</label>
+                </th>
+                <td>
+                    <input type="text" id="bureau_location" name="bureau_location" value="<?php echo esc_attr($location); ?>" class="regular-text" />
+                    <p class="description">Enter the bureau's location (city, state, etc.)</p>
+                </td>
+            </tr>
+            <tr>
+                <th scope="row">
+                    <label for="bureau_phone">Phone</label>
+                </th>
+                <td>
+                    <input type="tel" id="bureau_phone" name="bureau_phone" value="<?php echo esc_attr($phone); ?>" class="regular-text" />
+                    <p class="description">Enter the bureau's phone number</p>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <?php
+}
+
+/**
+ * Primary user details meta box callback
+ */
+function business_hierarchy_manager_primary_user_callback($post) {
+    $primary_first_name = get_post_meta($post->ID, '_primary_first_name', true);
+    $primary_last_name = get_post_meta($post->ID, '_primary_last_name', true);
+    $primary_email = get_post_meta($post->ID, '_primary_email', true);
+    
+    ?>
+    <div class="bureau-form">
+        <table class="form-table">
+            <tr>
+                <th scope="row">
+                    <label for="primary_first_name">First Name</label>
+                </th>
+                <td>
+                    <input type="text" id="primary_first_name" name="primary_first_name" value="<?php echo esc_attr($primary_first_name); ?>" class="regular-text" />
+                </td>
+            </tr>
+            <tr>
+                <th scope="row">
+                    <label for="primary_last_name">Last Name</label>
+                </th>
+                <td>
+                    <input type="text" id="primary_last_name" name="primary_last_name" value="<?php echo esc_attr($primary_last_name); ?>" class="regular-text" />
+                </td>
+            </tr>
+            <tr>
+                <th scope="row">
+                    <label for="primary_email">Email</label>
+                </th>
+                <td>
+                    <input type="email" id="primary_email" name="primary_email" value="<?php echo esc_attr($primary_email); ?>" class="regular-text" />
+                    <p class="description">This email will be used to create the primary user account</p>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <?php
+}
+
+/**
+ * Customize title placeholder for bureau companies
+ */
+function business_hierarchy_manager_bureau_title_placeholder($title) {
+    $screen = get_current_screen();
+    if ($screen && $screen->post_type === 'bureau_company') {
+        return 'Enter Bureau Company Name';
+    }
+    return $title;
+}
+
+/**
+ * Save bureau company custom fields
+ */
+function business_hierarchy_manager_save_bureau_fields($post_id, $post) {
+    // Security checks
+    if (!isset($_POST['business_hierarchy_manager_bureau_nonce']) || 
+        !wp_verify_nonce($_POST['business_hierarchy_manager_bureau_nonce'], 'business_hierarchy_manager_save_bureau')) {
+        return;
+    }
+    
+    if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {
+        return;
+    }
+    
+    if (!current_user_can('edit_post', $post_id)) {
+        return;
+    }
+    
+    if ($post->post_type !== 'bureau_company') {
+        return;
+    }
+    
+    // Save bureau details
+    if (isset($_POST['bureau_location'])) {
+        update_post_meta($post_id, '_bureau_location', sanitize_text_field($_POST['bureau_location']));
+    }
+    
+    if (isset($_POST['bureau_phone'])) {
+        update_post_meta($post_id, '_bureau_phone', sanitize_text_field($_POST['bureau_phone']));
+    }
+    
+    // Save primary user details
+    if (isset($_POST['primary_first_name'])) {
+        update_post_meta($post_id, '_primary_first_name', sanitize_text_field($_POST['primary_first_name']));
+    }
+    
+    if (isset($_POST['primary_last_name'])) {
+        update_post_meta($post_id, '_primary_last_name', sanitize_text_field($_POST['primary_last_name']));
+    }
+    
+    if (isset($_POST['primary_email'])) {
+        update_post_meta($post_id, '_primary_email', sanitize_email($_POST['primary_email']));
+    }
+}
+
+/**
+ * Hide the content editor for bureau companies
+ */
+function business_hierarchy_manager_hide_content_editor() {
+    $screen = get_current_screen();
+    if ($screen && $screen->post_type === 'bureau_company') {
+        echo '<style>';
+        echo '#postdivrich { display: none; }';
+        echo '.bureau-form .form-table th { width: 150px; }';
+        echo '.bureau-form .form-table td { padding: 15px 10px; }';
+        echo '.bureau-form .form-table input[type="text"], .bureau-form .form-table input[type="email"], .bureau-form .form-table input[type="tel"] { width: 100%; max-width: 400px; }';
+        echo '.bureau-form .description { color: #666; font-style: italic; margin-top: 5px; }';
+        echo '</style>';
+    }
+}
+
 // That's all, folks! The rest happens in the class files.
