@@ -3,10 +3,13 @@
   "version": "1.0.0",
   "description": "WordPress plugin admin styling with Tailwind CSS and DaisyUI",
   "scripts": {
-    "build:css": "tailwindcss -i ./assets/css/admin-tailwind.css -o ./assets/css/admin.css --minify"
+    "build:css": "postcss assets/css/admin-tailwind.css -o assets/css/admin.css"
   },
   "devDependencies": {
-    "tailwindcss": "^3.4.1",
-    "daisyui": "^4.0.7"
+    "@tailwindcss/postcss": "^4.1.10",
+    "daisyui": "^5.0.43",
+    "postcss": "^8.5.6",
+    "postcss-cli": "^11.0.1",
+    "tailwindcss": "^4.1.10"
   }
-} 
+}

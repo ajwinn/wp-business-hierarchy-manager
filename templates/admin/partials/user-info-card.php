@@ -14,8 +14,8 @@ if (!defined('ABSPATH')) {
 <div class="card bg-base-100 shadow-lg rounded-xl w-full h-full min-h-[600px]">
     <div class="card-body p-10 flex flex-col h-full">
         <h3 class="card-title text-2xl mb-2 text-left">Primary User Information</h3>
-        <p class="text-sm text-base-content/70 mb-6 text-left">Enter the primary user details for this bureau.</p>
-        <div class="grid grid-cols-2 gap-4 mb-6">
+        <p class="text-sm text-base-content/70 mb-6 text-left flex-grow-0">Enter the primary user details for this bureau.</p>
+        <div class="grid grid-cols-1 gap-4 mb-6">
             <div class="form-control w-full">
                 <label class="label text-left" for="primary_first_name">
                     <span class="label-text">First Name *</span>

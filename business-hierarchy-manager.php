@@ -1111,7 +1111,3 @@ add_action('admin_footer', 'business_hierarchy_manager_customize_publish_section
 add_action('admin_enqueue_scripts', function() {
     wp_enqueue_style('bhm-admin-tailwind', plugin_dir_url(__FILE__) . 'assets/css/admin.css', [], '1.0');
 });
-
-add_action('admin_head', function() {
-    echo '<script>document.documentElement.setAttribute("data-theme", "light");</script>';
-});

@@ -53,7 +53,7 @@ if ($_POST && isset($_POST['business_hierarchy_manager_bureau_nonce']) && wp_ver
 }
 ?>
 
-<div class="w-full max-w-6xl px-8 py-8 bg-base-100">
+<div class="w-full max-w-6xl px-8 py-8 bg-base-100 rounded-2xl shadow-xl border border-base-200">
     <h1 class="text-3xl font-bold mb-2 text-left">Add New Bureau Company</h1>
     <div class="alert alert-info mb-8 text-left">
         <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M12 20a8 8 0 100-16 8 8 0 000 16z"/></svg>
